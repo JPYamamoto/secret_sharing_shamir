@@ -31,7 +31,7 @@ class Controller:
         cyphered_content = IO.read_file(cyphered_file)
 
         points_content = IO.read_file(points_file)
-        points = Controller.parse_points(points_content)
+        points = Controller._parse_points(points_content)
         password = Polynomial.lagrange(points, 0)
 
         clear_content = Crypto.from_aes(cyphered_content, password)
@@ -40,7 +40,7 @@ class Controller:
 
 
     @staticmethod
-    def parse_points(points_text):
+    def _parse_points(points_text):
         lines = points_text.strip().split('\n')
         points = []
 
