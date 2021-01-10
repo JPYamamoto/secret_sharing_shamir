@@ -3,29 +3,75 @@
 Shamir's Secret Sharing Scheme.
 """
 
-__author__ = "Juan Pablo Yamamoto Zazueta and Luis Edgar Flores Ayala and Fausto David Hernández Jasso"
+__author__ = "Juan Pablo Yamamoto Zazueta, Luis Edgar Flores Ayala and Fausto David Hernández Jasso"
 __version__ = "1.0.0"
 __license__ = "MIT"
 
 import argparse
+from shamir.controller import Controller
+from shamir.argument_error import ArgumentError
+
+USAGE = "%(prog)s [c input n t output|d fragments cyphered]"
+DESCRIPTION = "Cyphers and decyphers files using Shamir's Secret Sharing Scheme."
+ARGS = {
+    "input": "El archivo que será encriptado.",
+    "n": "El número total de evaluaciones generadas.",
+    "t": "El número mínimo de evaluaciones requeridas para desencriptar el archivo.",
+    "fragments": "El archivo con al menos t de las n evaluaciones.",
+    "cyphered": "El archivo a desencriptar.",
+    "c": "Modo de cifrado.",
+    "d": "Modo de descifrado.",
+    "mode": "Modo de ejecución del programa: [c]ifrado o [d]escifrado.",
+}
 
 
-def main():
+def main(**kwargs):
     """ Main entry point of the app """
-    pass
+    if kwargs['[c|d]'] == 'c':
+        if kwargs['n'] <= 2:
+            raise ArgumentError("n should be higher than 2.")
+        if kwargs['t'] < 2 or kwargs['t'] > kwargs['n']:
+            raise ArgumentError("t should be between 2 and n (inclusive).")
+
+        Controller.encrypt(args.input, args.n, args.t)
+    elif kwargs['[c|d]'] == 'd':
+        if not kwargs['cyphered'].endswith('.aes'):
+            raise ArgumentError("The name of the cyphered file should have the extension .aes")
+
+        if not kwargs['fragments'].endswith('.frg'):
+            raise ArgumentError("The name of the fragments file should have the extension .frg")
+
+        Controller.decrypt(args.fragments, args.cyphered)
+    else:
+        raise ArgumentError("Invalid command.")
 
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
-    #parser = argparse.ArgumentParser(prog = 'main.py',
-    #                                 usage = '%(prog)s image_path [s|S]',
-    #                                 description = 'Determine the Cloud Coverage Index of the given image.')
+    parser = argparse.ArgumentParser(prog='main.py', usage=USAGE, description=DESCRIPTION)
 
     # Positional arguments
-    #parser.add_argument("image_path", help="The name of the image to analyze")
-    #parser.add_argument("S", nargs="?", choices=("S", "s"), default=False,
-    #                    help="Passed if the output image should be saved to <image_path>-seg.jpg")
+    suparsers = parser.add_subparsers(required=True, dest='[c|d]', help=ARGS['mode'])
+    parser_encrypt = suparsers.add_parser('c', help=ARGS['c'])
+    parser_decrypt = suparsers.add_parser('d', help=ARGS['d'])
 
-    #args = parser.parse_args()
-    #main(args.image_path, bool(args.S))
+    # Encrypt Mode
+    parser_encrypt.add_argument('input', help=ARGS['input'])
+    parser_encrypt.add_argument('n', help=ARGS['n'], type=int)
+    parser_encrypt.add_argument('t', help=ARGS['t'], type=int)
+
+    # Decrypt Mode
+    parser_decrypt.add_argument('fragments', help=ARGS['fragments'])
+    parser_decrypt.add_argument('cyphered', help=ARGS['cyphered'])
+
+    args = parser.parse_args()
+
+    try:
+        main(**vars(args))
+    except ArgumentError as a:
+        parser.error(str(a))
+    except ValueError as v:
+        print(str(v))
+    except IOError as io:
+        print("Error when opening the file: {}".format(io.filename))
 
