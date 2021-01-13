@@ -4,6 +4,7 @@ from .crypto import Crypto
 from .polynomial import Polynomial
 
 MODSZ = 208351617316091241234326746312124448251235562226470491514186331217050270460481
+BITS = 256
 
 class Controller:
     @staticmethod
@@ -14,11 +15,11 @@ class Controller:
         file_content = IO.read_file(entry_file, binary=True)
         aes_result = Crypto.to_aes(file_content, sha_pass)
 
-        coefficients = random.sample(range(MODSZ), t)
+        coefficients = Controller._sample_random_bits(BITS, t)
         coefficients.insert(0, sha_pass)
 
         polynomial = Polynomial(coefficients)
-        domain = random.sample(range(MODSZ), n)
+        domain = Controller._sample_random_bits(BITS, n)
         evaluations = [(x, polynomial.evaluate(x)) for x in domain]
 
         out_frg = '\n'.join(['({},{})'.format(p[0], p[1]) for p in evaluations])
@@ -49,4 +50,13 @@ class Controller:
             points.append((int(line[0]), int(line[1])))
 
         return points
+
+    @staticmethod
+    def _sample_random_bits(bits, k):
+        sample = set()
+
+        while len(sample) < k:
+            sample.add(random.getrandbits(bits))
+
+        return list(sample)
 
