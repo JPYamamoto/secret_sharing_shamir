@@ -7,6 +7,7 @@ MODSZ = 208351617316091241234326746312124448251235562226470491514186331217050270
 BITS = 256
 
 class Controller:
+
     @staticmethod
     def encrypt(entry_file, n, t):
         password = IO.input_secret("Input a password: ")
@@ -23,8 +24,11 @@ class Controller:
         evaluations = [(x, polynomial.evaluate(x, MODSZ)) for x in domain]
 
         out_frg = '\n'.join(['({},{})'.format(p[0], p[1]) for p in evaluations])
+
         IO.write_file(entry_file + '.aes', aes_result, binary=True)
+        print("The file {}.aes was successfully generated.".format(entry_file))
         IO.write_file(entry_file + '.frg', out_frg)
+        print("The file {}.frg was successfully generated.".format(entry_file))
 
 
     @staticmethod
@@ -39,6 +43,7 @@ class Controller:
         clear_content = Crypto.from_aes(cyphered_content, password_bytes)
         clear_filename = cyphered_file.replace('.aes', '')
         IO.write_file(clear_filename, clear_content, binary=True)
+        print("The file {} was successfully generated.".format(clear_filename))
 
 
     @staticmethod
@@ -51,6 +56,7 @@ class Controller:
             points.append((int(line[0]), int(line[1])))
 
         return points
+
 
     @staticmethod
     def _sample_random_bits(bits, k):

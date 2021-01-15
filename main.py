@@ -14,14 +14,14 @@ from shamir.argument_error import ArgumentError
 USAGE = "%(prog)s [c input n t output|d fragments cyphered]"
 DESCRIPTION = "Cyphers and decyphers files using Shamir's Secret Sharing Scheme."
 ARGS = {
-    "input": "El archivo que será encriptado.",
-    "n": "El número total de evaluaciones generadas.",
-    "t": "El número mínimo de evaluaciones requeridas para desencriptar el archivo.",
-    "fragments": "El archivo con al menos t de las n evaluaciones.",
-    "cyphered": "El archivo a desencriptar.",
-    "c": "Modo de cifrado.",
-    "d": "Modo de descifrado.",
-    "mode": "Modo de ejecución del programa: [c]ifrado o [d]escifrado.",
+    "input": "The file to be ciphered.",
+    "n": "The number of evaluations to be generated.",
+    "t": "The minimum number of fragments required to successfully decipher the file.",
+    "fragments": "The file with at least t out of n needed evaluations.",
+    "cyphered": "The file to be deciphered.",
+    "c": "Ciphering mode.",
+    "d": "Deciphering mode.",
+    "mode": "Execution mode: [c]ipher or [d]ecipher.",
 }
 
 
