@@ -27,6 +27,7 @@ ARGS = {
 
 def main(**kwargs):
     """ Main entry point of the app """
+    # Cipher
     if kwargs['[c|d]'] == 'c':
         if kwargs['n'] <= 2:
             raise ArgumentError("n should be higher than 2.")
@@ -34,6 +35,8 @@ def main(**kwargs):
             raise ArgumentError("t should be between 2 and n (inclusive).")
 
         Controller.encrypt(args.input, args.n, args.t)
+
+    # Decipher
     elif kwargs['[c|d]'] == 'd':
         if not kwargs['cyphered'].endswith('.aes'):
             raise ArgumentError("The name of the cyphered file should have the extension .aes")
@@ -42,6 +45,8 @@ def main(**kwargs):
             raise ArgumentError("The name of the fragments file should have the extension .frg")
 
         Controller.decrypt(args.fragments, args.cyphered)
+
+    # Error
     else:
         raise ArgumentError("Invalid command.")
 
