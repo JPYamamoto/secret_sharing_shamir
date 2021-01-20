@@ -2,6 +2,7 @@ import random
 from .io import IO
 from .crypto import Crypto
 from .polynomial import Polynomial
+from .argument_error import ArgumentError
 
 MODSZ = 208351617316091241234326746312124448251235562226470491514186331217050270460481
 BITS = 256
@@ -74,10 +75,15 @@ class Controller:
 
         # Get the fragments and use them to retrieve the password to decipher
         # the file.
-        points_content = IO.read_file(points_file)
-        points = Controller._parse_points(points_content)
-        password = Polynomial.lagrange(points, 0, MODSZ)
-        password_bytes = password.to_bytes(BITS // 8, byteorder='little')
+        try:
+            points_content = IO.read_file(points_file)
+            points = Controller._parse_points(points_content)
+            password = Polynomial.lagrange(points, 0, MODSZ)
+            password_bytes = password.to_bytes(32, byteorder='little')
+        except OverflowError:
+            raise ArgumentError("Error when deciphering the file, probably due to a lack of fragments.")
+        except ValueError:
+            raise ArgumentError("Error when reading the file {}. Invalid format.".format(cyphered_file))
 
         # Decipher the file.
         clear_content = Crypto.from_aes(cyphered_content, password_bytes)

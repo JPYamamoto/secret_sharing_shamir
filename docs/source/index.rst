@@ -19,8 +19,23 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-Main
+Controller
 ===================
-.. automodule:: shamir.main
+.. automodule:: shamir.controller
+   :members:
+
+IO
+===================
+.. automodule:: shamir.io
+   :members:
+
+Polynomial
+===================
+.. automodule:: shamir.polynomial
+   :members:
+
+Crypto
+===================
+.. automodule:: shamir.crypto
    :members:
 
